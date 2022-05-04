@@ -1,10 +1,15 @@
 import "dotenv/config";
 import "reflect-metadata";
+import express, { NextFunction, Request, Response } from "express";
 import { Kafka } from "kafkajs";
 
 import { config } from "@config/environment";
 import { EtherealMailProvider } from "@shared/container/providers/MailProvider/implementations/EtherealMail.provider";
 import { VonageSmsProvider } from "@shared/container/providers/SmsProvider/implementations/VonageSms.provider";
+
+import { router } from "../http/routes";
+
+const app = express();
 
 const kafka = new Kafka({
   clientId: "api-cherry-go",
@@ -53,4 +58,9 @@ async function run() {
   });
 }
 
-run().catch(console.error);
+app.use(router);
+
+app.listen(3334, () => {
+  run().catch(console.error);
+  console.log("worker server up and running");
+});
