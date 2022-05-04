@@ -344,6 +344,15 @@ yarn test:unit "d:/project/cherry-go/src/shared/infra/typeorm/factories/AddressF
  - docker-compose -f .\apache-kafka\docker-compose.yaml up -d
  - docker-compose up -d
 
+# Docker
+  - create a image:
+    -  ```docker build -t andersonfrfilho/cherry-go-worker:1.0.0 -f Dockerfile .```
+  - create a container:
+    - ```docker run --name cherry-go-backend --network cherry-go-compose_network-cherry-go-local --env-file .env -p 192.168.100.12:3333:3333 -d andersonfrfilho/cherry-go_api_backend:1.0.1```
+  - push image:
+    - ```docker push andersonfrfilho/cherry-go_api_backend:1.0.0```
+  -  docker run cherry-go-backend
+    - ```docker run andersonfrfilho/cherry-go_api_backend:1.0.0```
 
 # Kubernetes
   -  create a image:

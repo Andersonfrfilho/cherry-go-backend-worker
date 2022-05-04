@@ -20,7 +20,6 @@ class SESMailProvider implements MailProviderInterface {
 
   private async createClient() {
     try {
-      console.log("##########");
       this.client = nodemailer.createTransport({
         SES: new SES({
           apiVersion: "2010-12-01",
@@ -42,8 +41,6 @@ class SESMailProvider implements MailProviderInterface {
       "emails",
       `${MailType[email_type]}.hbs`
     );
-    console.log("###########");
-    console.log(templatePath);
     const templateFileContent = fs.readFileSync(templatePath, "utf-8");
 
     const templateParse = handlebars.compile(templateFileContent);
