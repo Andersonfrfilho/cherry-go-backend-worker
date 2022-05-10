@@ -1,6 +1,6 @@
 import "dotenv/config";
 import "reflect-metadata";
-import express, { NextFunction, Request, Response } from "express";
+import express from "express";
 import { Kafka } from "kafkajs";
 
 import { config } from "@config/environment";
@@ -12,7 +12,7 @@ import { router } from "../http/routes";
 const app = express();
 
 const kafka = new Kafka({
-  clientId: "api-cherry-go",
+  clientId: "cherry-go-worker",
   brokers: [config.queue.broker.base_url],
 });
 
