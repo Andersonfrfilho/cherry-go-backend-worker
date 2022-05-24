@@ -13,7 +13,7 @@ import {
 import { MailProviderInterface } from "@shared/container/providers/MailProvider/Mail.provider.interface";
 
 @injectable()
-export class EtherealMailProvider implements MailProviderInterface {
+export class SesAwsMailProvider implements MailProviderInterface {
   private client: Transporter;
   constructor() {
     this.createClient();
@@ -24,6 +24,8 @@ export class EtherealMailProvider implements MailProviderInterface {
       this.client = nodemailer.createTransport({
         SES: new SES({
           apiVersion: "2010-12-01",
+          accessKeyId: process.env.AWS_SMTP_ACCESS_KEY_ID,
+          secretAccessKey: process.env.AWS_SMTP_SECRET_ACCESS_KEY,
           region: process.env.AWS_DEFAULT_REGION,
         }),
       });

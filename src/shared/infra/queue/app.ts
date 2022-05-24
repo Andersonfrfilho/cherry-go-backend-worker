@@ -4,10 +4,13 @@ import express from "express";
 import { Kafka } from "kafkajs";
 
 import { config } from "@config/environment";
-import { EtherealMailProvider } from "@shared/container/providers/MailProvider/implementations/EtherealMail.provider";
-import { VonageSmsProvider } from "@shared/container/providers/SmsProvider/implementations/VonageSms.provider";
+import { SesAwsMailProvider } from "@shared/container/providers/MailProvider/implementations/SesAwsMail.provider";
+import { SnsAwsSmsProvider } from "@shared/container/providers/SmsProvider/implementations/SnsAwsSms.provider";
 
+import { version, name } from "../../../../package.json";
 import { router } from "../http/routes";
+
+const port = Number(process.env.PORT);
 
 const app = express();
 
@@ -24,9 +27,8 @@ const consumer_send_sms = kafka.consumer({
   groupId: `send-sms-consumer${Math.random()}`,
 });
 
-const emailProvider = new EtherealMailProvider();
-const smsProvider = new VonageSmsProvider();
-
+const emailProvider = new SesAwsMailProvider();
+const smsProvider = new SnsAwsSmsProvider();
 async function run() {
   await consumer_send_email.connect();
   await consumer_send_email.subscribe({ topic: config.mail.queue.topic });
@@ -50,17 +52,17 @@ async function run() {
     eachMessage: async ({ topic, partition, message }) => {
       const prefix = `${topic}[${partition} | ${message.offset}] / ${message.timestamp}`;
       console.log(` - ${prefix} ${message.key}#${message.value}`);
-      const { to, from, text } = JSON.parse(String(message.value));
-      if (config.sms.active) {
-        await smsProvider.sendSms({ from, text, to });
-      }
+      const { to, from, text, subject } = JSON.parse(String(message.value));
+      await smsProvider.sendSms({ from, text, to, subject });
     },
   });
 }
 
 app.use(router);
 
-app.listen(3334, () => {
+app.listen(port, () => {
   run().catch(console.error);
-  console.log("worker server up and running");
+  console.log(
+    `Application: ${name} \n port: ${port} \n version: ${version} \n Server is running!`
+  );
 });

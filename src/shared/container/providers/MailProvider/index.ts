@@ -1,12 +1,11 @@
 import { container } from "tsyringe";
 
-import { EtherealMailProvider } from "@shared/container/providers/MailProvider/implementations/EtherealMail.provider";
-import { SESMailProvider } from "@shared/container/providers/MailProvider/implementations/SESMail.provider";
 import { MailProviderInterface } from "@shared/container/providers/MailProvider/Mail.provider.interface";
 
+import { SesAwsMailProvider } from "./implementations/SesAwsMail.provider";
+
 const mailProvider = {
-  ethereal: container.resolve(EtherealMailProvider),
-  ses: container.resolve(SESMailProvider),
+  ses: container.resolve(SesAwsMailProvider),
 };
 
 container.registerInstance<MailProviderInterface>(
